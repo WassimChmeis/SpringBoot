@@ -2,6 +2,7 @@ package com.example.tatata.controller;
 
 
 import com.example.tatata.DTO.TodoDTO;
+import com.example.tatata.mapper.TodoMapper;
 import com.example.tatata.model.Todo;
 import com.example.tatata.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,21 @@ import java.util.List;
 public class TodoController {
 
     @Autowired
+    private TodoMapper todoMapper;
+
+    @Autowired
     private TodoService todoService;
 
     @GetMapping({"","/"})
-    public List<Todo> getAllTodos(){
+    public List<TodoDTO> getAllTodos(){
         return todoService.findAll();
     }
 
     @GetMapping({"/{id}"})
-    public Todo getTodoById(@PathVariable int id){
-        return todoService.getById(id);
+    public TodoDTO getTodoById(@PathVariable int id){
+        //TodoDTO todoDTO = todoMapper.mapTodoToDTO(todoService.getById(id));
+        TodoDTO todoDTO = todoService.getById(id);
+        return todoDTO;
     }
 
     @PostMapping ({"","/"})
@@ -36,10 +42,13 @@ public class TodoController {
     }
 
     @DeleteMapping({ "/{id}"})
-    public void DeleteTodoItem(@PathVariable int id){
-        todoService.delete(id);
+    public ResponseEntity DeleteTodoItem(@PathVariable int id){
+
+        return todoService.delete(id);
     }
-    @PutMapping("/{id}")
+
+
+    @PatchMapping("/{id}")
     public ResponseEntity<String> updateTodoItem(@PathVariable int id, @RequestBody TodoDTO todoDTO) {
         try {
             todoDTO.setId(id);
